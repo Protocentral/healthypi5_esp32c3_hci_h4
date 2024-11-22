@@ -6,7 +6,7 @@
 
 Follow the below steps to program the ESP32-C3 of Healthypi 5:
 
-1. Install the VSCode Extension for **ESP-IDF**.
+1. Install the VSCode Extension for ESP-IDF using the [Official Espressif guide here](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/get-started/index.html).
 
 2. Clone the repository.
     ```
