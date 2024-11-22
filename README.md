@@ -1,7 +1,7 @@
 # HealthyPi 5 ESP-IDF Firmware for ESP32C3 HCI coprocessor
 
 
-
+![Healthypi 5](./images/healthypi5.jpg)
 
 
 Follow the below steps to program the ESP32-C3 of Healthypi 5:
