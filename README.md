@@ -1,5 +1,8 @@
-| Supported Targets | ESP32-C3 | ESP32-S3 |
-| ----------------- | -------- | -------- |
+# HealthyPi 5 ESP-IDF Firmware for ESP32C3 HCI coprocessor
+
+
+
+
 
 Follow the below steps to program the ESP32-C3 of Healthypi 5:
 
