@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021-2022 Espressif Systems (Shanghai) CO LTD
+ * SPDX-FileCopyrightText: 2021-2023 Espressif Systems (Shanghai) CO LTD
  *
  * SPDX-License-Identifier: Unlicense OR CC0-1.0
  */
@@ -51,7 +51,7 @@ struct uart_env_tag {
 
 struct uart_env_tag uart_env;
 
-static volatile uhci_dev_t *s_uhci_hw = &UHCI0;
+static uhci_dev_t *s_uhci_hw = &UHCI0;
 static gdma_channel_handle_t s_rx_channel;
 static gdma_channel_handle_t s_tx_channel;
 
@@ -203,7 +203,11 @@ void uhci_uart_install(void)
         .data_bits = UART_DATA_8_BITS,
         .parity = UART_PARITY_DISABLE,
         .stop_bits = UART_STOP_BITS_1,
+#ifdef CONFIG_EXAMPLE_HCI_UART_FLOW_CTRL_ENABLE
         .flow_ctrl = UART_HW_FLOWCTRL_CTS_RTS,
+#else
+        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+#endif
         .rx_flow_ctrl_thresh = UART_RX_THRS,
         .source_clk = UART_SCLK_DEFAULT,
     };
@@ -214,12 +218,12 @@ void uhci_uart_install(void)
         .flags.reserve_sibling = 1,
         .direction = GDMA_CHANNEL_DIRECTION_TX,
     };
-    ESP_ERROR_CHECK(gdma_new_channel(&tx_channel_config, &s_tx_channel));
+    ESP_ERROR_CHECK(gdma_new_ahb_channel(&tx_channel_config, &s_tx_channel));
     gdma_channel_alloc_config_t rx_channel_config = {
         .direction = GDMA_CHANNEL_DIRECTION_RX,
         .sibling_chan = s_tx_channel,
     };
-    ESP_ERROR_CHECK(gdma_new_channel(&rx_channel_config, &s_rx_channel));
+    ESP_ERROR_CHECK(gdma_new_ahb_channel(&rx_channel_config, &s_rx_channel));
 
     gdma_connect(s_tx_channel, GDMA_MAKE_TRIGGER(GDMA_TRIG_PERIPH_UHCI, 0));
     gdma_connect(s_rx_channel, GDMA_MAKE_TRIGGER(GDMA_TRIG_PERIPH_UHCI, 0));
@@ -243,7 +247,7 @@ void uhci_uart_install(void)
 
     // configure UHCI
     uhci_ll_init(s_uhci_hw);
-    uhci_ll_set_eof_mode(s_uhci_hw, UHCI_RX_LEN_EOF);
+    uhci_ll_rx_set_eof_mode(s_uhci_hw, UHCI_RX_LEN_EOF);
     // disable software flow control
     s_uhci_hw->escape_conf.val = 0;
     uhci_ll_attach_uart_port(s_uhci_hw, 1);
@@ -279,9 +283,10 @@ void app_main(void)
         return;
     }
 
-    ESP_LOGI(tag, "HCI messages can be communicated over UART%d: \n"
+    ESP_LOGI(tag, "HCI messages can be communicated over UART%d:\n"
              "--PINs: TxD %d, RxD %d, RTS %d, CTS %d\n"
              "--Baudrate: %d", UART_HCI_NUM,
              GPIO_UART_TXD_OUT, GPIO_UART_RXD_IN, GPIO_UART_RTS_OUT, GPIO_UART_CTS_IN,
              CONFIG_EXAMPLE_HCI_UART_BAUDRATE);
+
 }

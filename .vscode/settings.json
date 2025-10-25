@@ -1,6 +1,9 @@
 {
     "idf.adapterTargetName": "esp32c3",
     "idf.flashType": "UART",
-    "idf.port": "/dev/cu.usbmodem11101",
-    "idf.portWin": "COM19"
+    "idf.port": "/dev/tty.usbmodem1201",
+    "idf.portWin": "COM19",
+    "idf.pythonInstallPath": "/opt/homebrew/opt/python/libexec/bin/python",
+    "idf.espIdfPath": "/Users/akw/esp/v5.5.1/esp-idf",
+    "idf.toolsPath": "/Users/akw/.espressif"
 }
